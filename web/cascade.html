@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaskad Kontrol - Çözünmüş Oksijen (DO) - Biyoreaktör</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .cascade-layout{display:grid; grid-template-columns:380px 1fr; gap:16px; padding:16px}
+    @media(max-width:1100px){.cascade-layout{grid-template-columns:1fr}}
+    .schematic{background:var(--card); border:1px solid #1f2a4d; border-radius:12px; padding:16px}
+    .schematic svg{width:100%; height:auto}
+    .canvas-card{background:#0d1330; border:1px solid #1f2a4d; border-radius:10px; padding:8px}
+    .rows{display:grid; grid-template-rows:auto auto auto; gap:12px}
+    .explain{background:var(--card); border:1px solid #1f2a4d; border-radius:12px; padding:16px}
+    .explain h3{margin:0 0 6px}
+    .explain p{margin:6px 0; color:var(--muted)}
+    .badge{display:inline-block; padding:2px 8px; border-radius:999px; background:#1f2a4d; border:1px solid #2a3766; color:var(--fg); font-size:12px}
+  </style>
+</head>
+<body>
+  <img src="assets/pikolab-logo.png" alt="Pikolab R&D" class="brand-logo" />
+  <header class="app-header" style="display:flex; align-items:center; justify-content:space-between;">
+    <div>
+      <h1>Kaskad Kontrol - Çözünmüş Oksijen (DO)</h1>
+      <p>Biyoreaktörde DO (y1) için dış PID, karıştırma hızı/hava debisi (y2) için iç PID ile kaskad kontrol.</p>
+    </div>
+    <nav>
+      <a class="badge" href="index.html">Simülatör</a>
+      <a class="badge" href="examples.html">Uygulama Örnekleri</a>
+    </nav>
+  </header>
+
+  <main class="cascade-layout">
+    <section class="controls card">
+      <h2>Parametreler</h2>
+      <div class="control-grid">
+        <label>Setpoint DO r1 <span id="valR1"></span>
+          <input id="r1" type="range" min="0" max="1" value="0.6" step="0.01" />
+        </label>
+        <label>Outer PID (C1) Kp1 <span id="valKp1"></span>
+          <input id="kp1" type="range" min="0" max="3" value="0.9" step="0.05" />
+        </label>
+        <label>Ki1 <span id="valKi1"></span>
+          <input id="ki1" type="range" min="0" max="1" value="0.22" step="0.01" />
+        </label>
+        <label>Kd1 <span id="valKd1"></span>
+          <input id="kd1" type="range" min="0" max="1" value="0.12" step="0.01" />
+        </label>
+        <label>Inner PID (C2) Kp2 <span id="valKp2"></span>
+          <input id="kp2" type="range" min="0" max="5" value="1.5" step="0.05" />
+        </label>
+        <label>Ki2 <span id="valKi2"></span>
+          <input id="ki2" type="range" min="0" max="2" value="0.5" step="0.01" />
+        </label>
+        <label>Kd2 <span id="valKd2"></span>
+          <input id="kd2" type="range" min="0" max="2" value="0.12" step="0.01" />
+        </label>
+        <label>Bozucu büyüklüğü <span id="valDz"></span>
+          <input id="dz" type="range" min="-0.8" max="0.8" value="0.2" step="0.02" />
+        </label>
+        <label>Bozucu zamanı (s) <span id="valDt"></span>
+          <input id="dt" type="range" min="2" max="60" value="10" step="1" />
+        </label>
+        <label>Süre (s) <span id="valT"></span>
+          <input id="simT" type="range" min="20" max="180" value="60" step="5" />
+        </label>
+        <label>Örnekleme (ms) <span id="valH"></span>
+          <input id="dtms" type="range" min="10" max="100" value="20" step="1" />
+        </label>
+        <label><input type="checkbox" id="noise" /> Ölçüm gürültüsü</label>
+        <div class="buttons">
+          <button id="btnRestart">Baştan Başlat</button>
+          <button id="btnPause">Duraklat</button>
+          <button id="btnResume" disabled>Devam</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="rows">
+      <div class="schematic">
+        <span class="badge">Şematik Gösterim</span>
+        <!-- Simple SVG schematic of cascade DO control -->
+        <svg viewBox="0 0 800 220">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#a7acc0" />
+            </marker>
+          </defs>
+          <!-- Blocks -->
+          <rect x="40" y="40" width="130" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
+          <text x="50" y="62" fill="#f1f3ff" font-size="13">
+            <tspan>Setpoint r1</tspan>
+            <tspan x="50" y="78" fill="#a7acc0">(DO hedefi)</tspan>
+          </text>
+          <rect x="180" y="40" width="140" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
+          <text x="190" y="60" fill="#f1f3ff" font-size="13">
+            <tspan>Outer PID C1</tspan>
+            <tspan x="190" y="76" fill="#a7acc0">(y1 hatasından r2 üretir)</tspan>
+          </text>
+          <rect x="340" y="40" width="140" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
+          <text x="350" y="60" fill="#f1f3ff" font-size="13">
+            <tspan>Inner SP r2</tspan>
+            <tspan x="350" y="76" fill="#a7acc0">(rpm/air hedefi)</tspan>
+          </text>
+
+          <rect x="470" y="120" width="140" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
+          <text x="480" y="142" fill="#f1f3ff" font-size="13">
+            <tspan>Inner PID C2</tspan>
+            <tspan x="480" y="158" fill="#a7acc0">(r2→u; hızlı döngü)</tspan>
+          </text>
+          <rect x="630" y="120" width="140" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
+          <text x="640" y="142" fill="#f1f3ff" font-size="13">
+            <tspan>Mixer/Airflow</tspan>
+            <tspan x="640" y="158" fill="#a7acc0">(aktüatör)</tspan>
+          </text>
+
+          <rect x="630" y="40" width="140" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
+          <text x="640" y="62" fill="#f1f3ff" font-size="13">
+            <tspan>DO (y1)</tspan>
+            <tspan x="640" y="78" fill="#a7acc0">(yavaş değişken)</tspan>
+          </text>
+
+          <!-- Arrows -->
+          <line x1="170" y1="68" x2="180" y2="68" stroke="#a7acc0" marker-end="url(#arrow)"/>
+          <line x1="320" y1="68" x2="340" y2="68" stroke="#a7acc0" marker-end="url(#arrow)"/>
+          <line x1="410" y1="96" x2="540" y2="120" stroke="#a7acc0" marker-end="url(#arrow)"/>
+          <line x1="610" y1="148" x2="630" y2="148" stroke="#a7acc0" marker-end="url(#arrow)"/>
+          <line x1="700" y1="120" x2="700" y2="96" stroke="#a7acc0" marker-end="url(#arrow)"/>
+
+          <!-- Feedback y1 to C1 -->
+          <path d="M 700 40 L 700 16 L 250 16 L 250 40" fill="none" stroke="#a7acc0" marker-end="url(#arrow)"/>
+          <!-- Bozucu -->
+          <text x="740" y="148" fill="#a7acc0" font-size="12">Bozucu (oxygen demand)</text>
+        </svg>
+      </div>
+      <div class="explain">
+        <h3>Kontrol Operasyonu ve Kaskad İhtiyacı</h3>
+        <p><strong>Amaç:</strong> Biyoreaktörde çözünmüş oksijen (DO, y1) seviyesini istenen set değerinde sabit tutmak.</p>
+        <p><strong>Neden kaskad?</strong> DO ölçümü ve biyolojik tepki <em>yavaş</em>tır; buna karşın karıştırıcı hızı/hava debisi (y2) <em>hızlı</em> kontrol edilebilir. Yavaş değişkeni (y1) doğrudan sürmek yerine, hızlı bir iç döngü (C2) üzerinden <em>ara hedef</em> (r2) vererek bozucuları anında bastırır, aşım ve kararsızlığı azaltır.</p>
+        <p><strong>Akış:</strong> Dış PID (C1) DO hatasından iç setpoint r2 üretir → İç PID (C2) r2−y2 hatasına göre aktüatörü (mixer/air) sürer → y2 hızlı toparlar ve y1 yavaşça setpoint’e yaklaşır.</p>
+      </div>
+      <div class="canvas-card"><canvas id="c_do" height="240" style="width:100%"></canvas></div>
+      <div class="canvas-card"><canvas id="c_inner" height="240" style="width:100%"></canvas></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>Renkler: <span class="chip chip-r">r1</span> <span class="chip" style="border-color:#F59E0B">y2</span> <span class="chip chip-y">y1</span> <span class="chip chip-u">u</span></span>
+    <div style="margin-top:6px; color:#9aa3b2; font-size:12px;">
+      Pikolab AR&GE tarafından MCBÜ - Biyomühendislik Bölümü Öğrencileri İçin Geliştirilmiştir. Tüm Hakları Saklıdır
+    </div>
+  </footer>
+
+  <script src="cascade.js"></script>
+</body>
+</html>

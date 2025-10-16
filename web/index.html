@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PID Kontrol Simülasyonu</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <img src="assets/pikolab-logo.png" alt="Pikolab R&D" class="brand-logo" />
+  <header class="app-header">
+    <h1>PID Kontrol Simülasyonu</h1>
+    <p>Biyoproses kontrolü için P / I / D katkılarını dinamik görün.</p>
+    <p>
+      <a href="examples.html" class="badge">Biyoproses Uygulama Örnekleri →</a>
+      <a href="cascade.html" class="badge">Kaskad DO Kontrol →</a>
+    </p>
+  </header>
+
+  <main class="layout">
+    <section class="controls card">
+      <h2>Parametreler</h2>
+      <div class="control-grid">
+        <label>Kontrolör modu
+          <select id="mode">
+            <option value="PID" selected>PID</option>
+            <option value="ONOFF">ON-OFF</option>
+          </select>
+        </label>
+        <label>Kp <span id="valKp"></span>
+          <input id="kp" type="range" min="0" max="5" value="1.2" step="0.05" />
+        </label>
+        <label>Ki <span id="valKi"></span>
+          <input id="ki" type="range" min="0" max="2" value="0.4" step="0.01" />
+        </label>
+        <label>Kd <span id="valKd"></span>
+          <input id="kd" type="range" min="0" max="2" value="0.2" step="0.01" />
+        </label>
+        <label>ON-OFF histerezis <span id="valHy"></span>
+          <input id="hy" type="range" min="0" max="0.5" value="0.05" step="0.01" />
+        </label>
+        <label>ON seviyesi u_high <span id="valUhi"></span>
+          <input id="uhi" type="range" min="0" max="3" value="2.0" step="0.1" />
+        </label>
+        <label>OFF seviyesi u_low <span id="valUlo"></span>
+          <input id="ulo" type="range" min="-1" max="1" value="0.0" step="0.1" />
+        </label>
+        <label>Setpoint r <span id="valR"></span>
+          <input id="sp" type="range" min="0" max="2" value="1" step="0.05" />
+        </label>
+        <label>Bozucu (adım) büyüklüğü <span id="valDz"></span>
+          <input id="dz" type="range" min="-1" max="1" value="0.3" step="0.05" />
+        </label>
+        <label>Bozucu zamanı (s) <span id="valDt"></span>
+          <input id="dt" type="range" min="1" max="20" value="8" step="1" />
+        </label>
+        <label>Süre (s) <span id="valT"></span>
+          <input id="simT" type="range" min="10" max="120" value="40" step="5" />
+        </label>
+        <label>Örnekleme (ms) <span id="valH"></span>
+          <input id="dtms" type="range" min="5" max="100" value="16" step="1" />
+        </label>
+      </div>
+      <div class="toggles">
+        <label><input type="checkbox" id="showP" checked /> P</label>
+        <label><input type="checkbox" id="showI" checked /> I</label>
+        <label><input type="checkbox" id="showD" checked /> D</label>
+        <label><input type="checkbox" id="showU" checked /> u = P+I+D</label>
+        <label><input type="checkbox" id="antiWindup" checked /> Anti-windup</label>
+        <label><input type="checkbox" id="noise" /> Ölçüm gürültüsü</label>
+      </div>
+      <div class="buttons">
+        <button id="btnRestart">Baştan Başlat</button>
+        <button id="btnPause">Duraklat</button>
+        <button id="btnResume" disabled>Devam</button>
+      </div>
+    </section>
+
+    <section class="plots card">
+      <div class="canvas-row">
+        <canvas id="plotY" height="260"></canvas>
+      </div>
+      <div class="canvas-row">
+        <canvas id="plotTerms" height="260"></canvas>
+      </div>
+      <div class="legend" id="legend"></div>
+      <div class="meter card-lite">
+        <div class="meter-header">
+          <span>Kontrol çıkışı (u)</span>
+          <span id="uPctVal">0%</span>
+        </div>
+        <div class="meter-bar">
+          <div id="uPctFill"></div>
+        </div>
+        <div class="meter-scale">
+          <span>0%</span><span>50%</span><span>100%</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="info card">
+      <h2>PID Açıklamaları</h2>
+      <ul>
+        <li><strong>P (Oransal)</strong>: Hata ile orantılı anlık tepki. Kp ↑ → hızlı cevap, aşım riski ↑.</li>
+        <li><strong>I (İntegral)</strong>: Hata birikimini giderir, kalıcı hatayı sıfırlar. Ki ↑ → ofset kaybolur, salınım riski ↑.</li>
+        <li><strong>D (Türev)</strong>: Değişim hızına tepki verir, aşımı ve salınımı sönümler. Kd ↑ → gürültüye hassasiyet ↑.</li>
+        <li><strong>Anti-windup</strong>: Doyum durumunda integratör birikimini sınırlar.</li>
+        <li>Bozucu: Süreçte ani sapma. Feedforward yok; PID kendi tepkisi ile düzeltir.</li>
+      </ul>
+    </aside>
+  </main>
+
+  <footer class="app-footer">
+    <span>Renkler: <span class="chip chip-r">r</span> <span class="chip chip-y">y</span> <span class="chip chip-p">P</span> <span class="chip chip-i">I</span> <span class="chip chip-d">D</span> <span class="chip chip-u">u</span></span>
+    <div style="margin-top:6px; color:#9aa3b2; font-size:12px;">
+      Pikolab AR&GE tarafından MCBÜ - Biyomühendislik Bölümü Öğrencileri İçin Geliştirilmiştir. Tüm Hakları Saklıdır
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

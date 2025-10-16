@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biyoproses Uygulama Örnekleri - Kaskad Kontrol</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .examples{max-width:1100px; margin:24px auto; padding:0 16px}
+    .ex-card{background:var(--card); border:1px solid #1f2a4d; border-radius:12px; padding:16px; margin-bottom:16px}
+    .ex-card h2{margin:0 0 8px}
+    .ex-card p{margin:6px 0; color:var(--muted)}
+    .badge{display:inline-block; padding:2px 8px; border-radius:999px; background:#1f2a4d; border:1px solid #2a3766; color:var(--fg); font-size:12px}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+    .note{color:var(--muted); font-size:14px}
+    .table{width:100%; border-collapse:collapse; border:1px solid #1f2a4d}
+    .table th,.table td{border:1px solid #1f2a4d; padding:8px; text-align:left}
+    .table th{color:var(--fg); background:#121836}
+  </style>
+</head>
+<body>
+  <img src="assets/pikolab-logo.png" alt="Pikolab R&D" class="brand-logo" />
+  <header class="app-header" style="display:flex; align-items:center; justify-content:space-between;">
+    <div>
+      <h1>Biyoproses Uygulama Örnekleri</h1>
+      <p>Kaskad kontrolün gerçek proseslerdeki kullanımlarına kısa örnekler.</p>
+    </div>
+    <div>
+      <a href="index.html" class="badge">← Simülatör</a>
+      <a href="cascade.html" class="badge">Kaskad DO Kontrol</a>
+    </div>
+  </header>
+
+  <main class="examples">
+    <section class="ex-card">
+      <h2>1. Biyoreaktör Sıcaklık Kontrolü</h2>
+      <div class="grid">
+        <div>
+          <span class="badge">Amaç</span>
+          <p>Reaktör içi sıcaklığın sabit tutulması</p>
+          <span class="badge">Kaskad Yapı</span>
+          <p>Birincil: Sıcaklık sensörü → sıcaklık kontrolörü (C1)<br/>İkincil: Soğutma suyu çıkış sıcaklığı/debisi → akış kontrolörü (C2)</p>
+        </div>
+        <div>
+          <canvas id="ex1" height="220" style="width:100%; background:#0d1330; border:1px solid #1f2a4d; border-radius:10px"></canvas>
+          <div class="note">Dış ortam sıcaklığı veya ısı üretimi değiştiğinde, iç akış döngüsü hızlı tepki vererek sıcaklığı stabilize eder.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ex-card">
+      <h2>2. pH Kontrolü (Asit–Baz Besleme)</h2>
+      <div class="grid">
+        <div>
+          <span class="badge">Amaç</span>
+          <p>pH’ın sabit tutulması</p>
+          <span class="badge">Kaskad Yapı</span>
+          <p>Birincil: pH ölçümü → pH kontrolörü (C1)<br/>İkincil: Asit/baz pompası akış hızı → debi kontrolörü (C2)</p>
+        </div>
+        <div>
+          <canvas id="ex2" height="220" style="width:100%; background:#0d1330; border:1px solid #1f2a4d; border-radius:10px"></canvas>
+          <div class="note">pH yavaş ölçülür; hızlı debi döngüsü ani girişleri sönümleyerek pH’ı stabil tutar.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ex-card">
+      <h2>3. Çözünmüş Oksijen (DO) Kontrolü</h2>
+      <div class="grid">
+        <div>
+          <span class="badge">Amaç</span>
+          <p>Hücre kültüründe DO’nun sabit kalması</p>
+          <span class="badge">Kaskad Yapı</span>
+          <p>Birincil: DO probu → PID (C1)<br/>İkincil: Karıştırıcı hızı veya hava akış debisi → hız/debi kontrolörü (C2)</p>
+        </div>
+        <div>
+          <canvas id="ex3" height="220" style="width:100%; background:#0d1330; border:1px solid #1f2a4d; border-radius:10px"></canvas>
+          <div class="note">DO yavaş değişir; hızlı rpm/debi döngüsü sapmaları hızlıca bastırır.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ex-card">
+      <h2>Diğer Endüstriyel Uygulamalar</h2>
+      <table class="table">
+        <thead>
+          <tr><th>Proses</th><th>Birincil Kontrol</th><th>İkincil Kontrol</th><th>Açıklama</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Buhar kazanı basınç kontrolü</td><td>Kazan basıncı</td><td>Yakıt akışı</td><td>Ani yük değişimlerinde daha hızlı tepki.</td></tr>
+          <tr><td>Isı eşanjörü</td><td>Çıkış sıcaklığı</td><td>Buhar vanası basıncı/debisi</td><td>Gecikmeli ısı transferlerinde kararlılık sağlar.</td></tr>
+          <tr><td>Distilasyon kolonu</td><td>Ürün saflığı</td><td>Reflü akışı</td><td>Ürün saflığındaki sapmaları erken düzeltir.</td></tr>
+          <tr><td>Fermentör köpük kontrolü</td><td>Köpük seviyesi</td><td>Antifoam pompası akış hızı</td><td>Köpük sensörü gecikmeli olduğundan pompa hızını ara değişken olarak kullanır.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+
+  </main>
+
+  <footer class="app-footer">
+    <span>Renkler: <span class="chip chip-r">r</span> <span class="chip chip-y">y</span> <span class="chip chip-p">P</span> <span class="chip chip-i">I</span> <span class="chip chip-d">D</span> <span class="chip chip-u">u</span></span>
+    <div style="margin-top:6px; color:#9aa3b2; font-size:12px;">
+      Pikolab AR&GE tarafından MCBÜ - Biyomühendislik Bölümü Öğrencileri İçin Geliştirilmiştir. Tüm Hakları Saklıdır
+    </div>
+  </footer>
+  <script src="examples.js"></script>
+</body>
+</html>

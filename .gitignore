@@ -1,0 +1,30 @@
+﻿# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+
+# Media outputs (large)
+media/gui/videos/*/partial_movie_files/
+
+# Node
+node_modules/
+
+# Local config
+.env
+

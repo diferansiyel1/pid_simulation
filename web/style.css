@@ -1,0 +1,52 @@
+:root{
+  --bg:#0e0a1f; --card:#141233; --muted:#a7acc0; --fg:#f1f3ff;
+  --brand:#a78bfa; /* violet */
+  --p:#f472b6;     /* pink for P */
+  --i:#22d3ee;     /* cyan for I */
+  --d:#c084fc;     /* lavender for D */
+  --u:#8b5cf6;     /* indigo for u */
+  --r:#fb7185;     /* rose for r */
+  --y:#60a5fa;     /* soft blue for y */
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; color:var(--fg); background:radial-gradient(1200px 800px at 20% -10%, #5b2e91 0%, #1a1033 60%);
+}
+.brand-logo{position:fixed; top:12px; right:12px; width:56px; height:56px; border-radius:12px; box-shadow:0 6px 16px rgba(0,0,0,0.35); opacity:0.95; z-index:10}
+.app-header{padding:24px 28px; border-bottom:1px solid #1f2a4d; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));}
+.app-header h1{margin:0 0 6px; font-size:24px}
+.app-header p{margin:0; color:var(--muted)}
+.layout{display:grid; grid-template-columns:360px 1fr 320px; gap:16px; padding:16px}
+.card{background:var(--card); border:1px solid #1f2a4d; border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.25)}
+.controls h2, .info h2{margin-top:0}
+.control-grid{display:grid; grid-template-columns:1fr; gap:8px}
+label{display:grid; grid-template-columns:160px 1fr; align-items:center; gap:10px; font-size:14px}
+input[type=range]{width:100%}
+.toggles{display:flex; flex-wrap:wrap; gap:12px; margin-top:12px}
+.buttons{display:flex; gap:12px; margin-top:12px}
+button{background:var(--brand); color:white; border:none; border-radius:10px; padding:10px 14px; cursor:pointer; box-shadow:0 8px 16px rgba(167,139,250,0.25)}
+button:disabled{opacity:.5; cursor:not-allowed}
+.plots{grid-column:2}
+.plots .canvas-row{background:#0d1330; border-radius:10px; border:1px solid #1f2a4d; margin-bottom:12px; padding:8px}
+.plots .canvas-row canvas{width:100%; display:block}
+.legend{display:flex; gap:12px; flex-wrap:wrap}
+.chip{display:inline-block; padding:2px 6px; border-radius:999px; background:#1f2a4d; border:1px solid #2a3766}
+.chip-r{border-color:var(--r)}
+.chip-y{border-color:var(--y)}
+.chip-p{border-color:var(--p)}
+.chip-i{border-color:var(--i)}
+.chip-d{border-color:var(--d)}
+.chip-u{border-color:var(--u)}
+.app-footer{padding:12px 16px; border-top:1px solid #1f2a4d; color:var(--muted)}
+@media(max-width:1200px){
+  .layout{grid-template-columns:1fr;}
+  .plots{grid-column:auto}
+}
+
+/* Meter styles */
+.card-lite{background:var(--card); border:1px solid #1f2a4d; border-radius:12px; padding:12px; margin-top:8px}
+.meter-header{display:flex; justify-content:space-between; align-items:center; color:var(--fg); font-weight:600; margin-bottom:6px}
+.meter-bar{height:10px; background:#10163a; border:1px solid #1f2a4d; border-radius:999px; overflow:hidden; box-shadow:inset 0 2px 5px rgba(0,0,0,.35)}
+.meter-bar #uPctFill{height:100%; width:0%; background:linear-gradient(90deg, var(--u), #9f7aea); transition:width .25s ease}
+.meter-scale{display:flex; justify-content:space-between; color:var(--muted); font-size:12px; margin-top:6px}
