@@ -55,9 +55,11 @@ Modern HTML/CSS/JS ile tarayıcıdan etkileşimli PID görselleştirici eklendi.
 3. P/I/D/u eğrilerini aç/kapa; anti-windup ve gürültüyü deneyin.
 
 ### Dosyalar
-- `web/index.html`: Arayüz ve düzen
-- `web/style.css`: Modern koyu tema stil
-- `web/app.js`: PID simülasyonu ve çizimler (Canvas)
+- `web/index.html`, `web/app.js`: PID / aç-kapa simülatörü
+- `web/cascade.html`, `web/cascade.js`: Kaskad DO kontrolü
+- `web/examples.html`, `web/examples.js`: Biyoproses uygulama örnekleri
+- `web/common.js`: Ortak PID, süreç modeli, grafik çizimi ve tema geçişi
+- `web/style.css`: Ortak açık/koyu tema
 
 ### Notlar
 - LaTeX metinleri için sisteminizde LaTeX dağıtımı yoksa, `Tex` yerine `MarkupText` kullanılabilir. Mevcut sahneler `Tex` ile çalışır.

@@ -1,52 +1,237 @@
+/* Ortak tema: üç sayfa da bu dosyayı kullanır.
+   Seri renkleri renk körlüğü denetiminden geçirilmiş paletten alınmıştır;
+   koyu tema aynı tonların koyu zemine göre seçilmiş adımlarıdır. */
+
 :root{
-  --bg:#0e0a1f; --card:#141233; --muted:#a7acc0; --fg:#f1f3ff;
-  --brand:#a78bfa; /* violet */
-  --p:#f472b6;     /* pink for P */
-  --i:#22d3ee;     /* cyan for I */
-  --d:#c084fc;     /* lavender for D */
-  --u:#8b5cf6;     /* indigo for u */
-  --r:#fb7185;     /* rose for r */
-  --y:#60a5fa;     /* soft blue for y */
+  color-scheme: light;
+  --bg:#f6f5fb; --surface:#ffffff; --surface-2:#f1effa;
+  --border:#e0dcef; --border-strong:#c9c3e0;
+  --text:#1d1b2f; --text-muted:#5b5872;
+  --accent:#6d28d9; --accent-hover:#5b21b6; --accent-ink:#ffffff; --accent-soft:#ede7fb;
+  --header-bg:linear-gradient(100deg,#3b1677 0%,#5b21b6 55%,#7c3aed 100%); --header-text:#ffffff; --header-muted:#e4dafc;
+  --focus:#7c3aed;
+
+  --plot-bg:#ffffff; --plot-grid:#ecebf3; --plot-axis:#9b97b0; --plot-text:#1d1b2f; --plot-muted:#5b5872;
+  --tip-bg:#ffffff; --tip-border:#c9c3e0;
+
+  --c-r:#6b6880; --c-y:#2a78d6; --c-u:#1d1b2f;
+  --c-p:#eb6834; --c-i:#1baf7a; --c-d:#6250d6; --c-y2:#e87ba4;
+
+  --radius:12px; --shadow:0 1px 2px rgba(29,27,47,.06), 0 4px 16px rgba(29,27,47,.06);
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; color:var(--fg); background:radial-gradient(1200px 800px at 20% -10%, #5b2e91 0%, #1a1033 60%);
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#0e0a1f; --surface:#17152e; --surface-2:#1f1c3d;
+    --border:#2a2752; --border-strong:#3b3770;
+    --text:#f1f0fb; --text-muted:#a9a6c4;
+    --accent:#a78bfa; --accent-hover:#c4b5fd; --accent-ink:#140f2b; --accent-soft:#2a2350;
+    --header-bg:linear-gradient(100deg,#1d1040 0%,#2e1765 60%,#40208a 100%); --header-text:#f1f0fb; --header-muted:#c9bdf0;
+    --focus:#c4b5fd;
+    --plot-bg:#17152e; --plot-grid:#26234a; --plot-axis:#5a5683; --plot-text:#f1f0fb; --plot-muted:#a9a6c4;
+    --tip-bg:#1f1c3d; --tip-border:#3b3770;
+    --c-r:#a9a6c4; --c-y:#3987e5; --c-u:#f1f0fb;
+    --c-p:#d95926; --c-i:#199e70; --c-d:#9085e9; --c-y2:#d55181;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  }
 }
-.brand-logo{position:fixed; top:12px; right:12px; width:56px; height:56px; border-radius:12px; box-shadow:0 6px 16px rgba(0,0,0,0.35); opacity:0.95; z-index:10}
-.app-header{padding:24px 28px; border-bottom:1px solid #1f2a4d; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));}
-.app-header h1{margin:0 0 6px; font-size:24px}
-.app-header p{margin:0; color:var(--muted)}
-.layout{display:grid; grid-template-columns:360px 1fr 320px; gap:16px; padding:16px}
-.card{background:var(--card); border:1px solid #1f2a4d; border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.25)}
-.controls h2, .info h2{margin-top:0}
-.control-grid{display:grid; grid-template-columns:1fr; gap:8px}
-label{display:grid; grid-template-columns:160px 1fr; align-items:center; gap:10px; font-size:14px}
-input[type=range]{width:100%}
-.toggles{display:flex; flex-wrap:wrap; gap:12px; margin-top:12px}
-.buttons{display:flex; gap:12px; margin-top:12px}
-button{background:var(--brand); color:white; border:none; border-radius:10px; padding:10px 14px; cursor:pointer; box-shadow:0 8px 16px rgba(167,139,250,0.25)}
-button:disabled{opacity:.5; cursor:not-allowed}
-.plots{grid-column:2}
-.plots .canvas-row{background:#0d1330; border-radius:10px; border:1px solid #1f2a4d; margin-bottom:12px; padding:8px}
-.plots .canvas-row canvas{width:100%; display:block}
-.legend{display:flex; gap:12px; flex-wrap:wrap}
-.chip{display:inline-block; padding:2px 6px; border-radius:999px; background:#1f2a4d; border:1px solid #2a3766}
-.chip-r{border-color:var(--r)}
-.chip-y{border-color:var(--y)}
-.chip-p{border-color:var(--p)}
-.chip-i{border-color:var(--i)}
-.chip-d{border-color:var(--d)}
-.chip-u{border-color:var(--u)}
-.app-footer{padding:12px 16px; border-top:1px solid #1f2a4d; color:var(--muted)}
-@media(max-width:1200px){
-  .layout{grid-template-columns:1fr;}
-  .plots{grid-column:auto}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#0e0a1f; --surface:#17152e; --surface-2:#1f1c3d;
+  --border:#2a2752; --border-strong:#3b3770;
+  --text:#f1f0fb; --text-muted:#a9a6c4;
+  --accent:#a78bfa; --accent-hover:#c4b5fd; --accent-ink:#140f2b; --accent-soft:#2a2350;
+  --header-bg:linear-gradient(100deg,#1d1040 0%,#2e1765 60%,#40208a 100%); --header-text:#f1f0fb; --header-muted:#c9bdf0;
+  --focus:#c4b5fd;
+  --plot-bg:#17152e; --plot-grid:#26234a; --plot-axis:#5a5683; --plot-text:#f1f0fb; --plot-muted:#a9a6c4;
+  --tip-bg:#1f1c3d; --tip-border:#3b3770;
+  --c-r:#a9a6c4; --c-y:#3987e5; --c-u:#f1f0fb;
+  --c-p:#d95926; --c-i:#199e70; --c-d:#9085e9; --c-y2:#d55181;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
 }
 
-/* Meter styles */
-.card-lite{background:var(--card); border:1px solid #1f2a4d; border-radius:12px; padding:12px; margin-top:8px}
-.meter-header{display:flex; justify-content:space-between; align-items:center; color:var(--fg); font-weight:600; margin-bottom:6px}
-.meter-bar{height:10px; background:#10163a; border:1px solid #1f2a4d; border-radius:999px; overflow:hidden; box-shadow:inset 0 2px 5px rgba(0,0,0,.35)}
-.meter-bar #uPctFill{height:100%; width:0%; background:linear-gradient(90deg, var(--u), #9f7aea); transition:width .25s ease}
-.meter-scale{display:flex; justify-content:space-between; color:var(--muted); font-size:12px; margin-top:6px}
+/* ---------- Temel ---------- */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0; background:var(--bg); color:var(--text); font:16px/1.5 var(--font)}
+h1,h2,h3{line-height:1.25}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+[hidden]{display:none !important}
+
+/* ---------- Başlık ve gezinme ---------- */
+.app-header{
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  padding:10px 20px; background:var(--header-bg); color:var(--header-text);
+}
+.brand img{display:block; width:44px; height:44px; border-radius:10px}
+.titles{flex:1 1 320px; min-width:0}
+.titles h1{margin:0; font-size:20px}
+.titles p{margin:2px 0 0; color:var(--header-muted); font-size:14px}
+.tabs{display:flex; gap:4px; flex-wrap:wrap}
+.tabs a{
+  color:var(--header-text); text-decoration:none; font-size:14px; font-weight:500;
+  padding:7px 12px; border-radius:999px; border:1px solid transparent; white-space:nowrap;
+}
+.tabs a:hover{background:rgba(255,255,255,.12)}
+.tabs a[aria-current="page"]{background:rgba(255,255,255,.2); border-color:rgba(255,255,255,.35)}
+.theme-toggle{
+  font:inherit; font-size:13px; color:var(--header-text); background:transparent; cursor:pointer;
+  border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:6px 12px; white-space:nowrap;
+}
+.theme-toggle:hover{background:rgba(255,255,255,.12)}
+
+/* ---------- Kartlar ---------- */
+.card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow)}
+.card-pad{padding:16px}
+
+/* ---------- Kontrol paneli ---------- */
+.controls{padding:6px 0}
+.group{border-bottom:1px solid var(--border)}
+.group:last-of-type{border-bottom:none}
+.group > summary{
+  list-style:none; cursor:pointer; padding:10px 16px; font-weight:600; font-size:14px;
+  display:flex; justify-content:space-between; align-items:center; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted);
+}
+.group > summary::-webkit-details-marker{display:none}
+.group > summary::after{content:"▸"; transition:transform .15s; font-size:12px}
+.group[open] > summary::after{transform:rotate(90deg)}
+.group > summary:hover{color:var(--text)}
+.group-body{padding:0 16px 14px; display:grid; gap:12px}
+.group-body .group-body{padding:0}
+
+.field{display:grid; grid-template-columns:1fr auto; align-items:baseline; gap:2px 8px}
+.field > label, .field > .label{font-size:14px; font-weight:500}
+.field .hint{display:block; font-weight:400; font-size:12px; color:var(--text-muted)}
+.field output{font-variant-numeric:tabular-nums; font-weight:600; font-size:14px}
+.field input[type=range], .field select{grid-column:1 / -1}
+
+input[type=range]{width:100%; margin:4px 0 0; accent-color:var(--accent); height:20px}
+select{
+  font:inherit; font-size:14px; color:var(--text); background:var(--surface-2);
+  border:1px solid var(--border-strong); border-radius:8px; padding:6px 8px; width:100%;
+}
+.check{display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer}
+.check input{width:16px; height:16px; margin:0; accent-color:var(--accent)}
+
+.actions{display:flex; gap:8px; padding:12px 16px 10px; border-top:1px solid var(--border); flex-wrap:wrap}
+.btn{
+  font:inherit; font-size:14px; font-weight:600; cursor:pointer; border-radius:8px; padding:8px 14px;
+  border:1px solid var(--accent); background:var(--accent); color:var(--accent-ink);
+}
+.btn:hover{background:var(--accent-hover); border-color:var(--accent-hover)}
+.btn.secondary{background:transparent; color:var(--accent)}
+.btn.secondary:hover{background:var(--accent-soft)}
+.btn:disabled{opacity:.5; cursor:not-allowed}
+
+/* ---------- Grafikler ---------- */
+.plot-card{margin:0; padding:10px 12px 8px}
+.plot-head{display:flex; align-items:center; justify-content:space-between; gap:8px 16px; flex-wrap:wrap; margin:0 2px 6px}
+.plot-head h2{margin:0; font-size:15px; font-weight:600}
+.plot-card canvas{display:block; width:100%; height:var(--plot-h, 260px); touch-action:pan-y}
+
+.legend{display:flex; gap:6px; flex-wrap:wrap}
+.chip{
+  display:inline-flex; align-items:center; gap:6px; font:inherit; font-size:13px; color:var(--text);
+  background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:2px 10px 2px 8px;
+}
+.chip .swatch{width:16px; height:0; border-top:3px solid var(--c); border-radius:2px}
+.chip .swatch.dashed{border-top-style:dashed}
+button.chip{cursor:pointer}
+button.chip:hover{border-color:var(--border-strong)}
+button.chip[aria-pressed="false"]{opacity:.45}
+button.chip[aria-pressed="false"] .swatch{border-top-color:var(--text-muted)}
+
+/* ---------- Bilgi / açıklama ---------- */
+.prose{color:var(--text)}
+.prose p, .prose li{color:var(--text-muted)}
+.prose strong{color:var(--text)}
+.prose ul{padding-left:20px; margin:8px 0}
+.prose li{margin:4px 0}
+
+.explain > summary{cursor:pointer; padding:12px 16px; font-weight:600; list-style:none; display:flex; gap:8px; align-items:center}
+.explain > summary::-webkit-details-marker{display:none}
+.explain > summary::before{content:"▸"; font-size:12px; color:var(--text-muted); transition:transform .15s}
+.explain[open] > summary::before{transform:rotate(90deg)}
+.explain .prose{padding:0 16px 14px 36px}
+
+.badge{
+  display:inline-block; padding:2px 10px; border-radius:999px; font-size:12px; font-weight:600;
+  background:var(--accent-soft); color:var(--accent); border:1px solid transparent;
+}
+
+/* ---------- Alt bilgi ---------- */
+.app-footer{padding:16px 20px 24px; color:var(--text-muted); font-size:13px; border-top:1px solid var(--border)}
+
+/* ---------- Simülatör ve kaskad yerleşimi ---------- */
+.sim-layout{
+  display:grid; grid-template-columns:300px minmax(0,1fr); gap:16px; padding:16px; align-items:start;
+  --plot-h:clamp(170px, calc((100vh - 306px) / 2), 380px);
+}
+.sim-layout > .controls{position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto}
+.plots{display:grid; gap:12px; min-width:0}
+.sim-layout.cascade{--plot-h:clamp(180px, calc((100vh - 330px) / 2), 320px)}
+.below{padding:0 16px 16px; display:grid; gap:12px}
+
+/* Kontrol çıkışı göstergesi */
+.u-readout{display:grid; grid-template-columns:auto 1fr; align-items:center; gap:4px 16px; padding:10px 16px}
+.u-readout .u-label{font-size:14px; font-weight:600}
+.u-readout .u-value{font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1}
+.u-bar{position:relative; height:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; overflow:hidden}
+.u-bar .fill{position:absolute; top:0; bottom:0; background:var(--accent); border-radius:999px}
+.u-bar .zero{position:absolute; top:-2px; bottom:-2px; width:2px; background:var(--text-muted)}
+.u-scale{grid-column:2; display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); font-variant-numeric:tabular-nums}
+
+/* Kaskad şeması */
+.schematic svg{display:block; width:100%; height:auto; max-height:260px}
+.sch-box{fill:var(--surface-2); stroke:var(--border-strong); stroke-width:1.2}
+.sch-box.ctrl{fill:var(--accent-soft); stroke:var(--accent)}
+.sch-title{fill:var(--text); font:600 14px var(--font)}
+.sch-sub{fill:var(--text-muted); font:12px var(--font)}
+.sch-line{stroke:var(--text-muted); stroke-width:1.5; fill:none}
+.sch-line.inner{stroke:var(--c-y2)}
+.sch-line.outer{stroke:var(--c-y)}
+.sch-arrowhead{fill:var(--text-muted)}
+.sch-edge{fill:var(--text-muted); font:italic 12px var(--font)}
+
+/* ---------- Örnekler sayfası ---------- */
+.examples{max-width:1180px; margin:0 auto; padding:20px 16px; display:grid; gap:16px}
+.ex-card{padding:18px 20px}
+.ex-card h2{margin:0 0 12px; font-size:19px}
+.ex-grid{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:20px; align-items:start}
+.ex-card dl{margin:0}
+.ex-card dt{margin:0 0 4px}
+.ex-card dd{margin:0 0 14px; color:var(--text-muted)}
+.ex-card figure{margin:0}
+.ex-card .note{color:var(--text-muted); font-size:14px; margin:6px 2px 0}
+.ex-card canvas{display:block; width:100%; height:240px}
+.table-wrap{overflow-x:auto}
+.table{width:100%; border-collapse:collapse; font-size:15px}
+.table th, .table td{border-bottom:1px solid var(--border); padding:10px 12px; text-align:left; vertical-align:top}
+.table th{background:var(--surface-2); font-weight:600}
+.table td{color:var(--text-muted)}
+.table td:first-child{color:var(--text); font-weight:500}
+
+/* ---------- Duyarlı yerleşim ---------- */
+@media (max-width: 900px){
+  .sim-layout{grid-template-columns:minmax(0,1fr); --plot-h:240px}
+  .sim-layout > .controls{position:static; max-height:none; order:2}
+  .plots{order:1}
+  .ex-grid{grid-template-columns:minmax(0,1fr)}
+  .app-header{gap:8px 12px}
+  .titles{flex:1 1 0}
+  .tabs{order:3; width:100%; flex-wrap:nowrap; overflow-x:auto}
+}
+@media (max-width: 520px){
+  .app-header{padding:10px 16px}
+  .brand img{width:36px; height:36px}
+  .titles h1{font-size:17px}
+  .titles p{display:none}
+  .theme-toggle{padding:4px 10px; font-size:12px}
+  .tabs a{padding:6px 10px; font-size:13px}
+  .sim-layout, .examples{padding-left:16px; padding-right:16px}
+  .below{padding:0 16px 16px}
+  .plot-card{padding:8px 6px 6px}
+  .sim-layout{--plot-h:220px}
+}

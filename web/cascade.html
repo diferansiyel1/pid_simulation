@@ -3,153 +3,209 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kaskad Kontrol - Çözünmüş Oksijen (DO) - Biyoreaktör</title>
+  <title>Kaskad DO Kontrolü</title>
+  <link rel="icon" href="assets/pikolab-logo.png" />
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .cascade-layout{display:grid; grid-template-columns:380px 1fr; gap:16px; padding:16px}
-    @media(max-width:1100px){.cascade-layout{grid-template-columns:1fr}}
-    .schematic{background:var(--card); border:1px solid #1f2a4d; border-radius:12px; padding:16px}
-    .schematic svg{width:100%; height:auto}
-    .canvas-card{background:#0d1330; border:1px solid #1f2a4d; border-radius:10px; padding:8px}
-    .rows{display:grid; grid-template-rows:auto auto auto; gap:12px}
-    .explain{background:var(--card); border:1px solid #1f2a4d; border-radius:12px; padding:16px}
-    .explain h3{margin:0 0 6px}
-    .explain p{margin:6px 0; color:var(--muted)}
-    .badge{display:inline-block; padding:2px 8px; border-radius:999px; background:#1f2a4d; border:1px solid #2a3766; color:var(--fg); font-size:12px}
-  </style>
+  <script src="common.js"></script>
 </head>
 <body>
-  <img src="assets/pikolab-logo.png" alt="Pikolab R&D" class="brand-logo" />
-  <header class="app-header" style="display:flex; align-items:center; justify-content:space-between;">
-    <div>
-      <h1>Kaskad Kontrol - Çözünmüş Oksijen (DO)</h1>
-      <p>Biyoreaktörde DO (y1) için dış PID, karıştırma hızı/hava debisi (y2) için iç PID ile kaskad kontrol.</p>
+  <header class="app-header">
+    <a class="brand" href="index.html"><img src="assets/pikolab-logo.png" alt="Pikolab AR&amp;GE" /></a>
+    <div class="titles">
+      <h1>Kaskad kontrol: çözünmüş oksijen (DO)</h1>
+      <p>Biyoreaktörde DO (y1) için dış PID, karıştırma hızı / hava debisi (y2) için iç PID.</p>
     </div>
-    <nav>
-      <a class="badge" href="index.html">Simülatör</a>
-      <a class="badge" href="examples.html">Uygulama Örnekleri</a>
+    <nav class="tabs" aria-label="Sayfalar">
+      <a href="index.html">Simülatör</a>
+      <a href="cascade.html" aria-current="page">Kaskad DO kontrolü</a>
+      <a href="examples.html">Uygulama örnekleri</a>
     </nav>
+    <button type="button" class="theme-toggle" data-theme-toggle>Tema</button>
   </header>
 
-  <main class="cascade-layout">
-    <section class="controls card">
-      <h2>Parametreler</h2>
-      <div class="control-grid">
-        <label>Setpoint DO r1 <span id="valR1"></span>
-          <input id="r1" type="range" min="0" max="1" value="0.6" step="0.01" />
-        </label>
-        <label>Outer PID (C1) Kp1 <span id="valKp1"></span>
-          <input id="kp1" type="range" min="0" max="3" value="0.9" step="0.05" />
-        </label>
-        <label>Ki1 <span id="valKi1"></span>
-          <input id="ki1" type="range" min="0" max="1" value="0.22" step="0.01" />
-        </label>
-        <label>Kd1 <span id="valKd1"></span>
-          <input id="kd1" type="range" min="0" max="1" value="0.12" step="0.01" />
-        </label>
-        <label>Inner PID (C2) Kp2 <span id="valKp2"></span>
-          <input id="kp2" type="range" min="0" max="5" value="1.5" step="0.05" />
-        </label>
-        <label>Ki2 <span id="valKi2"></span>
-          <input id="ki2" type="range" min="0" max="2" value="0.5" step="0.01" />
-        </label>
-        <label>Kd2 <span id="valKd2"></span>
-          <input id="kd2" type="range" min="0" max="2" value="0.12" step="0.01" />
-        </label>
-        <label>Bozucu büyüklüğü <span id="valDz"></span>
-          <input id="dz" type="range" min="-0.8" max="0.8" value="0.2" step="0.02" />
-        </label>
-        <label>Bozucu zamanı (s) <span id="valDt"></span>
-          <input id="dt" type="range" min="2" max="60" value="10" step="1" />
-        </label>
-        <label>Süre (s) <span id="valT"></span>
-          <input id="simT" type="range" min="20" max="180" value="60" step="5" />
-        </label>
-        <label>Örnekleme (ms) <span id="valH"></span>
-          <input id="dtms" type="range" min="10" max="100" value="20" step="1" />
-        </label>
-        <label><input type="checkbox" id="noise" /> Ölçüm gürültüsü</label>
-        <div class="buttons">
-          <button id="btnRestart">Baştan Başlat</button>
-          <button id="btnPause">Duraklat</button>
-          <button id="btnResume" disabled>Devam</button>
+  <main class="sim-layout cascade">
+    <aside class="controls card" aria-label="Parametreler">
+      <details class="group" open>
+        <summary>Dış döngü C1 · DO</summary>
+        <div class="group-body">
+          <div class="field">
+            <label for="r1">Ayar noktası r1 <span class="hint">hedef DO (normalize)</span></label>
+            <output for="r1"></output>
+            <input id="r1" type="range" min="0" max="1" value="0.6" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="kp1">Kp1</label>
+            <output for="kp1"></output>
+            <input id="kp1" type="range" min="0" max="3" value="0.9" step="0.05" />
+          </div>
+          <div class="field">
+            <label for="ki1">Ki1</label>
+            <output for="ki1"></output>
+            <input id="ki1" type="range" min="0" max="1" value="0.22" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="kd1">Kd1</label>
+            <output for="kd1"></output>
+            <input id="kd1" type="range" min="0" max="1" value="0.12" step="0.01" />
+          </div>
         </div>
-      </div>
-    </section>
+      </details>
 
-    <section class="rows">
-      <div class="schematic">
-        <span class="badge">Şematik Gösterim</span>
-        <!-- Simple SVG schematic of cascade DO control -->
-        <svg viewBox="0 0 800 220">
+      <details class="group" open>
+        <summary>İç döngü C2 · karıştırma/hava</summary>
+        <div class="group-body">
+          <div class="field">
+            <label for="kp2">Kp2</label>
+            <output for="kp2"></output>
+            <input id="kp2" type="range" min="0" max="5" value="1.5" step="0.05" />
+          </div>
+          <div class="field">
+            <label for="ki2">Ki2</label>
+            <output for="ki2"></output>
+            <input id="ki2" type="range" min="0" max="2" value="0.5" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="kd2">Kd2</label>
+            <output for="kd2"></output>
+            <input id="kd2" type="range" min="0" max="2" value="0.12" step="0.01" />
+          </div>
+        </div>
+      </details>
+
+      <details class="group" open>
+        <summary>Bozucu</summary>
+        <div class="group-body">
+          <div class="field">
+            <label for="dz">Bozucu büyüklüğü <span class="hint">hava beslemesindeki basamak değişim</span></label>
+            <output for="dz"></output>
+            <input id="dz" type="range" min="-0.8" max="0.8" value="0.2" step="0.02" />
+          </div>
+          <div class="field">
+            <label for="dt">Bozucu anı (s)</label>
+            <output for="dt"></output>
+            <input id="dt" type="range" min="2" max="60" value="10" step="1" />
+          </div>
+        </div>
+      </details>
+
+      <details class="group">
+        <summary>Simülasyon</summary>
+        <div class="group-body">
+          <div class="field">
+            <label for="simT">Görüntülenen süre (s)</label>
+            <output for="simT"></output>
+            <input id="simT" type="range" min="20" max="180" value="60" step="5" />
+          </div>
+          <div class="field">
+            <label for="dtms">Örnekleme aralığı (ms)</label>
+            <output for="dtms"></output>
+            <input id="dtms" type="range" min="10" max="100" value="20" step="1" />
+          </div>
+          <label class="check"><input type="checkbox" id="noise" /> Ölçüm gürültüsü ekle</label>
+        </div>
+      </details>
+
+      <div class="actions">
+        <button type="button" class="btn" id="btnRestart">Baştan başlat</button>
+        <button type="button" class="btn secondary" id="btnPause" aria-pressed="false">Duraklat</button>
+      </div>
+    </aside>
+
+    <section class="plots" aria-label="Şema ve grafikler">
+      <figure class="plot-card card schematic">
+        <figcaption class="plot-head"><h2>Kaskad kontrol şeması</h2>
+          <div class="legend">
+            <span class="chip"><span class="swatch" style="--c:var(--c-y)"></span>dış geri besleme (y1)</span>
+            <span class="chip"><span class="swatch" style="--c:var(--c-y2)"></span>iç geri besleme (y2)</span>
+          </div>
+        </figcaption>
+        <svg viewBox="0 0 850 240" role="img" aria-label="Ayar noktası r1 dış PID C1'e girer; C1 iç ayar noktası r2'yi üretir; iç PID C2 aktüatörü sürer; aktüatör çıkışı y2 hem C2'ye geri beslenir hem DO'yu (y1) etkiler; y1 C1'e geri beslenir.">
           <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#a7acc0" />
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="sch-arrowhead" d="M 0 0 L 10 5 L 0 10 z" />
             </marker>
           </defs>
-          <!-- Blocks -->
-          <rect x="40" y="40" width="130" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
-          <text x="50" y="62" fill="#f1f3ff" font-size="13">
-            <tspan>Setpoint r1</tspan>
-            <tspan x="50" y="78" fill="#a7acc0">(DO hedefi)</tspan>
-          </text>
-          <rect x="180" y="40" width="140" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
-          <text x="190" y="60" fill="#f1f3ff" font-size="13">
-            <tspan>Outer PID C1</tspan>
-            <tspan x="190" y="76" fill="#a7acc0">(y1 hatasından r2 üretir)</tspan>
-          </text>
-          <rect x="340" y="40" width="140" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
-          <text x="350" y="60" fill="#f1f3ff" font-size="13">
-            <tspan>Inner SP r2</tspan>
-            <tspan x="350" y="76" fill="#a7acc0">(rpm/air hedefi)</tspan>
-          </text>
+          <!-- Üst sıra: r1 → C1 → r2 ... DO -->
+          <rect class="sch-box" x="20" y="44" width="140" height="56" rx="8" />
+          <text class="sch-title" x="32" y="67">Ayar noktası r1</text>
+          <text class="sch-sub" x="32" y="86">DO hedefi</text>
 
-          <rect x="470" y="120" width="140" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
-          <text x="480" y="142" fill="#f1f3ff" font-size="13">
-            <tspan>Inner PID C2</tspan>
-            <tspan x="480" y="158" fill="#a7acc0">(r2→u; hızlı döngü)</tspan>
-          </text>
-          <rect x="630" y="120" width="140" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
-          <text x="640" y="142" fill="#f1f3ff" font-size="13">
-            <tspan>Mixer/Airflow</tspan>
-            <tspan x="640" y="158" fill="#a7acc0">(aktüatör)</tspan>
-          </text>
+          <rect class="sch-box ctrl" x="190" y="44" width="170" height="56" rx="8" />
+          <text class="sch-title" x="202" y="67">Dış PID (C1)</text>
+          <text class="sch-sub" x="202" y="86">yavaş döngü</text>
 
-          <rect x="630" y="40" width="140" height="56" rx="8" fill="#121833" stroke="#2a3766"/>
-          <text x="640" y="62" fill="#f1f3ff" font-size="13">
-            <tspan>DO (y1)</tspan>
-            <tspan x="640" y="78" fill="#a7acc0">(yavaş değişken)</tspan>
-          </text>
+          <rect class="sch-box" x="390" y="44" width="150" height="56" rx="8" />
+          <text class="sch-title" x="402" y="67">İç ayar noktası r2</text>
+          <text class="sch-sub" x="402" y="86">rpm / hava hedefi</text>
 
-          <!-- Arrows -->
-          <line x1="170" y1="68" x2="180" y2="68" stroke="#a7acc0" marker-end="url(#arrow)"/>
-          <line x1="320" y1="68" x2="340" y2="68" stroke="#a7acc0" marker-end="url(#arrow)"/>
-          <line x1="410" y1="96" x2="540" y2="120" stroke="#a7acc0" marker-end="url(#arrow)"/>
-          <line x1="610" y1="148" x2="630" y2="148" stroke="#a7acc0" marker-end="url(#arrow)"/>
-          <line x1="700" y1="120" x2="700" y2="96" stroke="#a7acc0" marker-end="url(#arrow)"/>
+          <rect class="sch-box" x="620" y="44" width="150" height="56" rx="8" />
+          <text class="sch-title" x="632" y="67">Çözünmüş O₂ (y1)</text>
+          <text class="sch-sub" x="632" y="86">yavaş süreç, τ = 3 s</text>
 
-          <!-- Feedback y1 to C1 -->
-          <path d="M 700 40 L 700 16 L 250 16 L 250 40" fill="none" stroke="#a7acc0" marker-end="url(#arrow)"/>
+          <!-- Alt sıra: C2 → aktüatör -->
+          <rect class="sch-box ctrl" x="390" y="144" width="150" height="56" rx="8" />
+          <text class="sch-title" x="402" y="167">İç PID (C2)</text>
+          <text class="sch-sub" x="402" y="186">hızlı döngü</text>
+
+          <rect class="sch-box" x="620" y="144" width="150" height="56" rx="8" />
+          <text class="sch-title" x="632" y="167">Karıştırıcı / hava</text>
+          <text class="sch-sub" x="632" y="186">hızlı süreç, τ = 0,5 s</text>
+
+          <!-- İleri yol -->
+          <line class="sch-line" x1="160" y1="72" x2="188" y2="72" marker-end="url(#arrow)" />
+          <line class="sch-line" x1="360" y1="72" x2="388" y2="72" marker-end="url(#arrow)" />
+          <line class="sch-line" x1="465" y1="100" x2="465" y2="142" marker-end="url(#arrow)" />
+          <line class="sch-line" x1="540" y1="172" x2="618" y2="172" marker-end="url(#arrow)" />
+          <text class="sch-edge" x="572" y="164">u</text>
+          <line class="sch-line" x1="695" y1="144" x2="695" y2="102" marker-end="url(#arrow)" />
+          <text class="sch-edge" x="703" y="128">y2</text>
+
           <!-- Bozucu -->
-          <text x="740" y="148" fill="#a7acc0" font-size="12">Bozucu (oxygen demand)</text>
+          <line class="sch-line" x1="840" y1="172" x2="772" y2="172" marker-end="url(#arrow)" />
+          <text class="sch-edge" x="782" y="162">bozucu</text>
+
+          <!-- Dış geri besleme y1 → C1 -->
+          <path class="sch-line outer" d="M 695 44 V 16 H 275 V 42" marker-end="url(#arrow)" />
+          <text class="sch-edge" x="440" y="12">y1 (DO ölçümü)</text>
+          <!-- İç geri besleme y2 → C2 -->
+          <path class="sch-line inner" d="M 695 200 V 226 H 465 V 202" marker-end="url(#arrow)" />
+          <text class="sch-edge" x="520" y="222">y2 (debi ölçümü)</text>
         </svg>
-      </div>
-      <div class="explain">
-        <h3>Kontrol Operasyonu ve Kaskad İhtiyacı</h3>
-        <p><strong>Amaç:</strong> Biyoreaktörde çözünmüş oksijen (DO, y1) seviyesini istenen set değerinde sabit tutmak.</p>
-        <p><strong>Neden kaskad?</strong> DO ölçümü ve biyolojik tepki <em>yavaş</em>tır; buna karşın karıştırıcı hızı/hava debisi (y2) <em>hızlı</em> kontrol edilebilir. Yavaş değişkeni (y1) doğrudan sürmek yerine, hızlı bir iç döngü (C2) üzerinden <em>ara hedef</em> (r2) vererek bozucuları anında bastırır, aşım ve kararsızlığı azaltır.</p>
-        <p><strong>Akış:</strong> Dış PID (C1) DO hatasından iç setpoint r2 üretir → İç PID (C2) r2−y2 hatasına göre aktüatörü (mixer/air) sürer → y2 hızlı toparlar ve y1 yavaşça setpoint’e yaklaşır.</p>
-      </div>
-      <div class="canvas-card"><canvas id="c_do" height="240" style="width:100%"></canvas></div>
-      <div class="canvas-card"><canvas id="c_inner" height="240" style="width:100%"></canvas></div>
+      </figure>
+
+      <figure class="plot-card card">
+        <figcaption class="plot-head">
+          <h2>DO (y1), iç döngü çıkışı (y2) ve ayar noktası (r1)</h2>
+          <div class="legend">
+            <span class="chip"><span class="swatch dashed" style="--c:var(--c-r)"></span>r1 — DO ayar noktası</span>
+            <span class="chip"><span class="swatch" style="--c:var(--c-y)"></span>y1 — DO</span>
+            <span class="chip"><span class="swatch" style="--c:var(--c-y2)"></span>y2 — rpm / hava</span>
+          </div>
+        </figcaption>
+        <canvas id="c_do" aria-label="DO, iç döngü çıkışı ve ayar noktasının zamanla değişimi"></canvas>
+      </figure>
+
+      <figure class="plot-card card">
+        <figcaption class="plot-head"><h2>İç kontrolör çıkışı u(t) (C2)</h2></figcaption>
+        <canvas id="c_inner" aria-label="İç kontrolör çıkışının zamanla değişimi"></canvas>
+      </figure>
     </section>
   </main>
 
+  <section class="below">
+    <details class="explain card" open>
+      <summary>Neden kaskad kontrol?</summary>
+      <div class="prose">
+        <p><strong>Amaç:</strong> Biyoreaktördeki çözünmüş oksijeni (DO, y1) ayar noktasında sabit tutmak.</p>
+        <p><strong>Neden kaskad?</strong> DO ölçümü ve biyolojik tepki yavaştır; karıştırıcı hızı ve hava debisi (y2) ise hızlı kontrol edilebilir. Yavaş değişkeni doğrudan sürmek yerine, hızlı bir iç döngüye (C2) ara hedef (r2) verilir. Hava beslemesindeki bir dalgalanma, DO'ya ulaşmadan iç döngüde bastırılır.</p>
+        <p><strong>Akış:</strong> Dış PID (C1), DO hatasından iç ayar noktası r2'yi üretir. İç PID (C2), r2 − y2 hatasına göre aktüatörü sürer. y2 hızla toparlanır, y1 yavaşça ayar noktasına yaklaşır.</p>
+        <p><strong>Gözlem:</strong> Bozucu anında y2'deki sıçramanın ne kadar çabuk söndüğüne ve y1'in bundan ne kadar az etkilendiğine bakın. Kp2'yi küçültüp aynı deneyi tekrarlayın.</p>
+      </div>
+    </details>
+  </section>
+
   <footer class="app-footer">
-    <span>Renkler: <span class="chip chip-r">r1</span> <span class="chip" style="border-color:#F59E0B">y2</span> <span class="chip chip-y">y1</span> <span class="chip chip-u">u</span></span>
-    <div style="margin-top:6px; color:#9aa3b2; font-size:12px;">
-      Pikolab AR&GE tarafından MCBÜ - Biyomühendislik Bölümü Öğrencileri İçin Geliştirilmiştir. Tüm Hakları Saklıdır
-    </div>
+    Pikolab AR&amp;GE tarafından MCBÜ Biyomühendislik Bölümü öğrencileri için geliştirilmiştir. Tüm hakları saklıdır.
   </footer>
 
   <script src="cascade.js"></script>
