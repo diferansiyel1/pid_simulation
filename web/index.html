@@ -26,6 +26,19 @@
   <main class="sim-layout">
     <aside class="controls card" aria-label="Parametreler">
       <details class="group" open>
+        <summary>Senaryo</summary>
+        <div class="group-body">
+          <div class="field">
+            <label for="scenario">Deney</label>
+            <select id="scenario">
+              <option value="">Serbest deneme</option>
+            </select>
+          </div>
+          <div class="scenario-card" id="scenarioCard" hidden></div>
+        </div>
+      </details>
+
+      <details class="group" open>
         <summary>Kontrolör</summary>
         <div class="group-body">
           <div class="field">
@@ -75,13 +88,35 @@
         </div>
       </details>
 
-      <details class="group" open>
+      <details class="group" id="groupProcess">
+        <summary>Süreç modeli</summary>
+        <div class="group-body">
+          <div class="formula" id="processFormula" aria-live="polite"></div>
+          <div class="field">
+            <label for="pK">Süreç kazancı K</label>
+            <output for="pK"></output>
+            <input id="pK" type="range" min="0.2" max="3" value="1" step="0.05" />
+          </div>
+          <div class="field">
+            <label for="pTau">Zaman sabiti τ (s) <span class="hint">sürecin ne kadar yavaş tepki verdiği</span></label>
+            <output for="pTau"></output>
+            <input id="pTau" type="range" min="0.2" max="5" value="1.8" step="0.1" />
+          </div>
+          <div class="field">
+            <label for="pTheta">Ölü zaman θ (s) <span class="hint">girişin çıkışa ulaşma gecikmesi</span></label>
+            <output for="pTheta"></output>
+            <input id="pTheta" type="range" min="0" max="2" value="0" step="0.05" />
+          </div>
+        </div>
+      </details>
+
+      <details class="group">
         <summary>Ayar noktası ve bozucu</summary>
         <div class="group-body">
           <div class="field">
-            <label for="sp">Ayar noktası r <span class="hint">setpoint</span></label>
+            <label for="sp">Ayar noktası r <span class="hint">t = 1 s'de 0'dan bu değere basamak</span></label>
             <output for="sp"></output>
-            <input id="sp" type="range" min="0" max="2" value="1" step="0.05" />
+            <input id="sp" type="range" min="0.2" max="2" value="1" step="0.05" />
           </div>
           <div class="field">
             <label for="dz">Bozucu büyüklüğü <span class="hint">sürece eklenen basamak</span></label>
@@ -89,9 +124,37 @@
             <input id="dz" type="range" min="-1" max="1" value="0.3" step="0.05" />
           </div>
           <div class="field">
-            <label for="dt">Bozucu anı (s) <span class="hint">başlangıçtan itibaren</span></label>
+            <label for="dt">Planlı bozucu anı (s)</label>
             <output for="dt"></output>
-            <input id="dt" type="range" min="1" max="20" value="8" step="1" />
+            <input id="dt" type="range" min="2" max="40" value="20" step="1" />
+          </div>
+        </div>
+      </details>
+
+      <details class="group" id="groupAdvanced">
+        <summary>Türev ve doyum</summary>
+        <div class="group-body">
+          <div class="field">
+            <label for="dMode">Türev kaynağı</label>
+            <select id="dMode">
+              <option value="measurement" selected>Ölçüm: −Kd·dy/dt (tepmesiz)</option>
+              <option value="error">Hata: Kd·de/dt (tepmeli)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="tf">D filtresi T<sub>f</sub> (s) <span class="hint">0 = filtresiz; gürültüyü bastırır</span></label>
+            <output for="tf"></output>
+            <input id="tf" type="range" min="0" max="0.5" value="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="uMin">Doyum alt sınırı u<sub>min</sub></label>
+            <output for="uMin"></output>
+            <input id="uMin" type="range" min="-5" max="0" value="-5" step="0.1" />
+          </div>
+          <div class="field">
+            <label for="uMax">Doyum üst sınırı u<sub>max</sub></label>
+            <output for="uMax"></output>
+            <input id="uMax" type="range" min="0.5" max="5" value="5" step="0.05" />
           </div>
         </div>
       </details>
@@ -105,27 +168,58 @@
             <input id="simT" type="range" min="10" max="120" value="40" step="5" />
           </div>
           <div class="field">
-            <label for="dtms">Örnekleme aralığı (ms)</label>
+            <label for="dtms">Kontrolör örnekleme aralığı (ms) <span class="hint">kontrolörün ölçüm alma sıklığı</span></label>
             <output for="dtms"></output>
-            <input id="dtms" type="range" min="5" max="100" value="16" step="1" />
+            <input id="dtms" type="range" min="10" max="1000" value="20" step="10" />
           </div>
           <label class="check"><input type="checkbox" id="noise" /> Ölçüm gürültüsü ekle</label>
         </div>
       </details>
 
-      <div class="actions">
-        <button type="button" class="btn" id="btnRestart">Baştan başlat</button>
-        <button type="button" class="btn secondary" id="btnPause" aria-pressed="false">Duraklat</button>
+      <div class="actions sticky-actions">
+        <div class="row">
+          <button type="button" class="btn" id="btnRestart">Baştan başlat</button>
+          <button type="button" class="btn secondary" id="btnPause" aria-pressed="false">Duraklat</button>
+          <button type="button" class="btn secondary" id="btnStep" title="Duraklatılmışken bir örnekleme aralığı ilerletir" disabled>Tek adım</button>
+        </div>
+        <div class="row">
+          <label class="inline" for="speed">Hız</label>
+          <select id="speed" class="compact">
+            <option value="0.5">0,5×</option>
+            <option value="1" selected>1×</option>
+            <option value="2">2×</option>
+            <option value="5">5×</option>
+          </select>
+          <button type="button" class="btn secondary" id="btnDist" aria-pressed="false">Bozucu uygula</button>
+        </div>
+        <div class="row">
+          <span class="hint">İndir:</span>
+          <button type="button" class="btn ghost" id="btnPng">PNG</button>
+          <button type="button" class="btn ghost" id="btnCsv">CSV</button>
+        </div>
       </div>
     </aside>
 
     <section class="plots" aria-label="Grafikler">
+      <div class="metrics card" aria-live="polite">
+        <div class="metrics-head">
+          <h2>Yanıt metrikleri <span class="hint" id="metricsNote">bozucusuz basamak yanıtından, anında hesaplanır</span></h2>
+          <div class="metrics-actions">
+            <span class="status" id="metricStatus" hidden></span>
+            <button type="button" class="btn ghost small" id="btnRef">Referans olarak sabitle</button>
+            <button type="button" class="btn ghost small" id="btnRefClear" hidden>Referansı kaldır</button>
+          </div>
+        </div>
+        <dl class="metric-grid" id="metricGrid"></dl>
+      </div>
+
       <figure class="plot-card card">
         <figcaption class="plot-head">
           <h2>Süreç çıkışı y(t) ve ayar noktası r(t)</h2>
           <div class="legend">
             <span class="chip"><span class="swatch dashed" style="--c:var(--c-r)"></span>r — ayar noktası</span>
             <span class="chip"><span class="swatch" style="--c:var(--c-y)"></span>y — süreç çıkışı</span>
+            <span class="chip" id="refChip" hidden><span class="swatch faded" style="--c:var(--c-y)"></span><span id="refChipText">referans</span></span>
           </div>
         </figcaption>
         <canvas id="plotY" aria-label="Süreç çıkışı ve ayar noktasının zamanla değişimi"></canvas>
@@ -144,31 +238,65 @@
         <canvas id="plotTerms" aria-label="Kontrol sinyali ve P, I, D katkılarının zamanla değişimi"></canvas>
       </figure>
 
-      <div class="u-readout card">
-        <div>
-          <div class="u-label">Kontrol çıkışı</div>
-          <div class="u-value" id="uVal">u = 0,00</div>
+      <div class="decomp card">
+        <div class="decomp-head">
+          <h2>Şu anda her terim ne yapıyor?</h2>
+          <span class="hint" id="decompTime"></span>
         </div>
-        <div class="u-bar" role="meter" id="uBar" aria-label="Kontrol çıkışı, doyum sınırlarına göre">
-          <div class="zero" id="uZero"></div>
-          <div class="fill" id="uFill"></div>
-        </div>
-        <div class="u-scale"><span id="uMinLbl"></span><span id="uMaxLbl"></span></div>
+        <div class="decomp-grid" id="decompGrid"></div>
       </div>
     </section>
   </main>
 
   <section class="below">
+    <section class="card lab" aria-labelledby="labTitle">
+      <div class="lab-head">
+        <div>
+          <h2 id="labTitle">Kazanç etkisi laboratuvarı</h2>
+          <p class="hint">Bir kazancı dört farklı değerde dener, diğer her şeyi sabit tutar. Yanıtlar anında hesaplanır; açıktan koyuya renk, kazancın büyüdüğünü gösterir.</p>
+        </div>
+        <div class="lab-controls">
+          <div class="segmented" role="radiogroup" aria-label="Taranacak kazanç">
+            <button type="button" role="radio" aria-checked="true" data-gain="kp">Kp</button>
+            <button type="button" role="radio" aria-checked="false" data-gain="ki">Ki</button>
+            <button type="button" role="radio" aria-checked="false" data-gain="kd">Kd</button>
+          </div>
+          <select id="labBase" class="compact" aria-label="Diğer parametreler">
+            <option value="example" selected>Önerilen örnek süreç</option>
+            <option value="current">Mevcut ayarlarım</option>
+          </select>
+        </div>
+      </div>
+      <p class="lab-base" id="labBaseText"></p>
+      <div class="lab-grid">
+        <figure class="plot-card lab-plot">
+          <figcaption class="plot-head">
+            <h3>Basamak yanıtları</h3>
+            <div class="legend" id="labLegend"></div>
+          </figcaption>
+          <canvas id="plotLab" aria-label="Farklı kazanç değerleri için basamak yanıtları"></canvas>
+        </figure>
+        <div class="table-wrap">
+          <table class="table compact-table" id="labTable"></table>
+        </div>
+      </div>
+      <h3 class="trend-title" id="trendTitle">Kazanç artınca ne olur?</h3>
+      <div class="table-wrap">
+        <table class="table compact-table trend-table" id="trendTable"></table>
+      </div>
+      <ul class="trend-notes" id="trendNotes"></ul>
+    </section>
+
     <details class="explain card">
       <summary>PID terimleri: ne gözlemlemeli?</summary>
       <div class="prose">
         <ul>
-          <li><strong>P (oransal)</strong>: Hatayla orantılı, anlık tepki verir. Kp arttıkça süreç daha hızlı yanıt verir. Yalnız P ile ayar noktasının altında kalan bir kalıcı hata oluşur.</li>
+          <li><strong>P (oransal)</strong>: Hatayla orantılı, anlık tepki verir. Kp arttıkça süreç daha hızlı yanıt verir. Yalnız P ile ayar noktasının altında kalan bir kalıcı hata oluşur: e∞ = r / (1 + K·Kp).</li>
           <li><strong>I (integral)</strong>: Hatayı zaman içinde biriktirir ve kalıcı hatayı sıfırlar. Ki arttıkça hedefe daha çabuk oturur, ancak aşım ve salınım eğilimi artar.</li>
-          <li><strong>D (türev)</strong>: Ölçümün değişim hızına karşı koyar, aşımı ve salınımı sönümler. Ölçüm gürültüsünü de büyüttüğü için Kd arttıkça kontrol sinyali titrer.</li>
-          <li><strong>Anti-windup</strong>: Kontrol çıkışı doyum sınırına (±5) dayandığında integralin boşuna büyümesini engeller.</li>
-          <li><strong>Bozucu</strong>: Sürece belirlenen anda eklenen basamak etkisidir. İleri besleme yoktur; PID bozucuyu ancak çıkışta gördükten sonra düzeltir.</li>
-          <li><strong>Süreç modeli</strong>: Birinci dereceden, kazancı K = 1 ve zaman sabiti τ = 1,8 s olan bir süreçtir.</li>
+          <li><strong>D (türev)</strong>: Ölçümün değişim hızına karşı koyar, aşımı ve salınımı sönümler. Ölçüm gürültüsünü de büyüttüğü için Kd arttıkça kontrol sinyali titrer; D filtresi bunu azaltır.</li>
+          <li><strong>Anti-windup</strong>: Kontrol çıkışı doyum sınırına dayandığında integralin boşuna büyümesini engeller.</li>
+          <li><strong>Ölü zaman</strong>: Kontrol sinyalinin etkisi çıkışa gecikerek ulaşır. Ölü zaman arttıkça aynı kazançlar daha fazla aşım ve salınım üretir.</li>
+          <li><strong>Bozucu</strong>: Sürece eklenen basamak etkisidir. PID bozucuyu ancak çıkışta gördükten sonra düzeltir.</li>
         </ul>
         <p>İpucu: Grafiklerin üzerine gelerek herhangi bir andaki değerleri okuyabilirsiniz. Duraklatıp okumak daha kolaydır.</p>
       </div>

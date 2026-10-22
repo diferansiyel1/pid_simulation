@@ -6,6 +6,8 @@ Kapsam: `web/` altındaki üç etkileşimli sayfa (Simülatör, Kaskad DO, Uygul
 
 Durum (22.10.2026): Faz 0 ve Faz 1 uygulandı. Bunlara ek olarak kaskad şemasına iç geri besleme ve bozucu girişi çizildi (Faz 3.2'nin bir kısmı), bozucu etiketi fiziksel konumuna göre düzeltildi (Faz 3.3'ün etiket kısmı) ve grafiklere fareyle değer okuma eklendi. Kalan: Faz 2, Faz 3'ün geri kalanı, Faz 4. Kaskad şeması dar ekranda küçük kalıyor; dikey bir şema düzeni Faz 3.2'ye eklenmeli.
 
+Durum (22.10.2026, ikinci güncelleme): Faz 2 (2.1–2.13) uygulandı. Senaryo kartlarındaki her sayısal gözlem simülasyonla doğrulandı. Metrik tanımları ders kitabı standardına göre: yükselme süresi, aşım ve yerleşme süresi kalıcı son değere göre; kalıcı hata ve IAE ayar noktasına göre. Kazanç etkisi laboratuvarında her kazanç için, ders kitabı eğilimini net gösteren bir “önerilen örnek süreç” seçildi: Kp için yalnız P ve θ = 0,5 s; Ki için Kp = 1 ve θ = 0,3 s; Kd için Kp = 3, Ki = 1 ve θ = 0,6 s. Ayar noktası basamağı artık t = 1 s'de uygulanıyor; varsayılan planlı bozucu 20 s'de. Kalan: Faz 3'ün geri kalanı ve Faz 4.
+
 ---
 
 ## 1. Hedef kullanım senaryoları
@@ -215,6 +217,11 @@ Faz 1 sonunda: üç sayfa aynı görünüme sahip, grafikler okunabilir, projeks
 | 2.8 | Türev seçeneği arayüzde: hata üzerinden / ölçüm üzerinden; D filtresi | Türev tepmesini önce göstermek, sonra çözmek (3.3-3) | S |
 | 2.9 | Ayarlanabilir doyum sınırları (u_min/u_max) ve doğru ölçeklenmiş gösterge | Windup'ı görünür kılmak (3.3-4, 3.3-5) | S |
 | 2.10 | PNG ve CSV dışa aktarma | Laboratuvar raporu | S |
+| 2.11 | **Kazanç etkisi laboratuvarı**: seçilen kazanç (Kp, Ki veya Kd) dört değerde, diğerleri sabitken anında simüle edilir; yanıtlar aynı grafikte açıktan koyuya, metrikleri tabloda | Her terimin yanıtı nasıl değiştirdiğini tek bakışta görmek | M |
+| 2.12 | **“Kazanç artınca ne olur?” tablosu**: ders kitabındaki kurallar ile o anki model üzerinde hesaplanan değişimler yan yana, oklarla; ikisi farklıysa nedeni yazılır (ör. ölü zaman yokken Kp aşımı artırmaz) | Kuralı ezberlemek yerine modele bağlı olduğunu anlamak | S |
+| 2.13 | **Anlık katkı ayrıştırması**: P, I ve D'nin u'ya katkısı sıfır merkezli çubuklar ve formülleriyle; her terim için “şu an ne yapıyor” cümlesi (ör. “Çıkış hızla yükseliyor; D frenliyor”) | Terimlerin işlevini simülasyon akarken okumak (2.5 ile birleşik) | M |
+
+P, I ve D etkilerinin anlaşılması için 2.11–2.13 birlikte çalışır: 2.13 bir terimin o anda ne yaptığını, 2.11 kazancı değişince yanıtın bütününün nasıl değiştiğini, 2.12 bu değişimin genel kural ile karşılaştırmasını gösterir.
 
 Önerilen senaryo kartları:
 

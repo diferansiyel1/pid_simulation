@@ -16,6 +16,8 @@
 
   --c-r:#6b6880; --c-y:#2a78d6; --c-u:#1d1b2f;
   --c-p:#eb6834; --c-i:#1baf7a; --c-d:#6250d6; --c-y2:#e87ba4;
+  --seq-1:#86b6ef; --seq-2:#3987e5; --seq-3:#1c5cab; --seq-4:#0d366b;
+  --st-warn-bg:#fef3c7; --st-warn:#92400e; --st-crit-bg:#fee2e2; --st-crit:#991b1b; --st-ok:#166534;
 
   --radius:12px; --shadow:0 1px 2px rgba(29,27,47,.06), 0 4px 16px rgba(29,27,47,.06);
   --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -33,6 +35,8 @@
     --tip-bg:#1f1c3d; --tip-border:#3b3770;
     --c-r:#a9a6c4; --c-y:#3987e5; --c-u:#f1f0fb;
     --c-p:#d95926; --c-i:#199e70; --c-d:#9085e9; --c-y2:#d55181;
+    --seq-1:#184f95; --seq-2:#3987e5; --seq-3:#86b6ef; --seq-4:#cde2fb;
+    --st-warn-bg:#3a2a05; --st-warn:#fcd34d; --st-crit-bg:#3b0d0d; --st-crit:#fca5a5; --st-ok:#86efac;
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
   }
 }
@@ -48,6 +52,8 @@
   --tip-bg:#1f1c3d; --tip-border:#3b3770;
   --c-r:#a9a6c4; --c-y:#3987e5; --c-u:#f1f0fb;
   --c-p:#d95926; --c-i:#199e70; --c-d:#9085e9; --c-y2:#d55181;
+  --seq-1:#184f95; --seq-2:#3987e5; --seq-3:#86b6ef; --seq-4:#cde2fb;
+  --st-warn-bg:#3a2a05; --st-warn:#fcd34d; --st-crit-bg:#3b0d0d; --st-crit:#fca5a5; --st-ok:#86efac;
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
 }
 
@@ -167,21 +173,12 @@ button.chip[aria-pressed="false"] .swatch{border-top-color:var(--text-muted)}
 /* ---------- Simülatör ve kaskad yerleşimi ---------- */
 .sim-layout{
   display:grid; grid-template-columns:300px minmax(0,1fr); gap:16px; padding:16px; align-items:start;
-  --plot-h:clamp(170px, calc((100vh - 306px) / 2), 380px);
+  --plot-h:clamp(170px, calc((100vh - 336px) / 2), 380px);
 }
-.sim-layout > .controls{position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto}
+.sim-layout > .controls{position:sticky; top:12px; max-height:calc(100vh - 100px); overflow:auto; padding-bottom:0}
 .plots{display:grid; gap:12px; min-width:0}
 .sim-layout.cascade{--plot-h:clamp(180px, calc((100vh - 330px) / 2), 320px)}
-.below{padding:0 16px 16px; display:grid; gap:12px}
-
-/* Kontrol çıkışı göstergesi */
-.u-readout{display:grid; grid-template-columns:auto 1fr; align-items:center; gap:4px 16px; padding:10px 16px}
-.u-readout .u-label{font-size:14px; font-weight:600}
-.u-readout .u-value{font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1}
-.u-bar{position:relative; height:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; overflow:hidden}
-.u-bar .fill{position:absolute; top:0; bottom:0; background:var(--accent); border-radius:999px}
-.u-bar .zero{position:absolute; top:-2px; bottom:-2px; width:2px; background:var(--text-muted)}
-.u-scale{grid-column:2; display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); font-variant-numeric:tabular-nums}
+.below{padding:0 16px 16px; display:grid; grid-template-columns:minmax(0,1fr); gap:12px}
 
 /* Kaskad şeması */
 .schematic svg{display:block; width:100%; height:auto; max-height:260px}
@@ -234,4 +231,78 @@ button.chip[aria-pressed="false"] .swatch{border-top-color:var(--text-muted)}
   .below{padding:0 16px 16px}
   .plot-card{padding:8px 6px 6px}
   .sim-layout{--plot-h:220px}
+}
+
+/* ---------- Faz 2 bileşenleri ---------- */
+.btn.ghost{background:transparent; color:var(--text); border-color:var(--border-strong); font-weight:500}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.small{font-size:13px; padding:4px 10px}
+select.compact{width:auto; padding:5px 8px}
+label.inline{font-size:14px; font-weight:500}
+.sticky-actions{position:sticky; bottom:0; background:var(--surface); z-index:1; display:grid; gap:6px; padding:10px 12px; border-radius:0 0 var(--radius) var(--radius)}
+.sticky-actions .row{display:flex; gap:6px; align-items:center; flex-wrap:wrap}
+.sticky-actions .btn{font-size:13px; padding:5px 10px}
+
+.scenario-card{background:var(--accent-soft); border-radius:8px; padding:10px 12px; font-size:13px; line-height:1.45}
+.scenario-card p{margin:0 0 6px}
+.scenario-card p:last-child{margin-bottom:0}
+.scenario-card .ask{color:var(--text-muted)}
+
+.formula{font-size:15px; text-align:center; padding:8px; background:var(--surface-2); border-radius:8px; font-variant-numeric:tabular-nums}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3}
+.frac > span:first-child{border-bottom:1.5px solid currentColor; padding:0 6px 2px}
+.frac > span:last-child{padding:2px 6px 0}
+
+.hint{font-weight:400; font-size:12px; color:var(--text-muted)}
+.metrics{padding:8px 14px 10px}
+.metrics-head, .decomp-head{display:flex; justify-content:space-between; align-items:center; gap:6px 12px; flex-wrap:wrap}
+.metrics-head h2, .decomp-head h2{margin:0; font-size:15px}
+.metrics-actions{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.metric-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(104px, 1fr)); gap:6px 12px; margin:6px 0 0}
+.metric dt{font-size:12px; color:var(--text-muted); line-height:1.3}
+.metric dd{margin:1px 0 0; font-size:18px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.2}
+.metric .ref{display:block; font-size:12px; color:var(--text-muted); font-variant-numeric:tabular-nums}
+.status{font-size:13px; font-weight:600; padding:3px 10px; border-radius:999px}
+.status.warn{background:var(--st-warn-bg); color:var(--st-warn)}
+.status.critical{background:var(--st-crit-bg); color:var(--st-crit)}
+
+.swatch{display:inline-block; width:16px; height:0; border-top:3px solid var(--c); border-radius:2px; vertical-align:middle}
+.swatch.faded{opacity:.4}
+
+.decomp{padding:10px 14px 12px}
+.decomp-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px 18px; margin-top:8px}
+.term-top{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.term-name{font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:6px}
+.term-val{font-size:15px; font-weight:700; font-variant-numeric:tabular-nums}
+.term-bar{position:relative; height:10px; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; margin:6px 0 4px; overflow:hidden}
+.term-bar .zero{position:absolute; left:calc(50% - 1px); top:0; bottom:0; width:2px; background:var(--text-muted); z-index:1}
+.term-bar .fill{position:absolute; top:0; bottom:0}
+.term-formula{font-size:12px; color:var(--text-muted); font-variant-numeric:tabular-nums}
+.term-say{font-size:13px; margin:4px 0 0; line-height:1.4}
+
+.lab{padding:16px 18px}
+.lab-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px 20px; flex-wrap:wrap}
+.lab-head h2{margin:0 0 4px; font-size:18px}
+.lab-head p{margin:0; max-width:640px; font-size:13px}
+.lab-controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.segmented{display:inline-flex; border:1px solid var(--border-strong); border-radius:8px; overflow:hidden}
+.segmented button{font:inherit; font-size:14px; font-weight:600; padding:6px 16px; background:transparent; border:0; color:var(--text); cursor:pointer}
+.segmented button + button{border-left:1px solid var(--border-strong)}
+.segmented button[aria-checked="true"]{background:var(--accent); color:var(--accent-ink)}
+.lab-base{font-size:13px; color:var(--text-muted); margin:10px 0 12px}
+.lab-grid{display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:16px; align-items:start}
+.lab-plot{padding:0}
+.lab-plot h3, .trend-title{margin:0; font-size:15px}
+.lab-plot canvas{height:280px}
+.compact-table th, .compact-table td{padding:7px 10px; font-size:14px; font-variant-numeric:tabular-nums}
+.trend-title{margin:18px 0 8px}
+.trend-table td:nth-child(2), .trend-table td:nth-child(3){color:var(--text)}
+.trend-table .match{color:var(--st-ok); font-weight:600}
+.trend-table .mismatch{color:var(--st-warn); font-weight:600}
+.trend-notes{margin:10px 0 0; padding-left:20px; font-size:14px; color:var(--text-muted)}
+.trend-notes li{margin:4px 0}
+
+@media (max-width: 900px){
+  .lab-grid{grid-template-columns:minmax(0,1fr)}
+  .sticky-actions{position:static}
 }
